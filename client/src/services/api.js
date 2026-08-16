@@ -1,7 +1,22 @@
 import axios from 'axios';
 
+const getApiBaseUrl = () => {
+  let envUrl = import.meta.env.VITE_API_URL;
+
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    let cleanUrl = envUrl.trim().replace(/\/+$/, '');
+    if (!cleanUrl.endsWith('/api')) {
+      cleanUrl = `${cleanUrl}/api`;
+    }
+    return cleanUrl;
+  }
+
+  // Default fallback for local development with Vite proxy
+  return '/api';
+};
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json'
   }
