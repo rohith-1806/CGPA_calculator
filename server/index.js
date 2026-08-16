@@ -63,16 +63,21 @@ const rootExcelPath = path.join(__dirname, '../login credentials.xlsx');
 ensureExcelFileExists(serverExcelPath);
 ensureExcelFileExists(rootExcelPath);
 
-// Start Express Listener Immediately
-app.listen(PORT, () => {
-  console.log(`=================================================`);
-  console.log(`🚀 GrowX Backend Server running on port: ${PORT}`);
-  console.log(`🔒 Private Login Authentication & Data Isolation ACTIVE`);
-  console.log(`=================================================`);
+const startServer = async () => {
+  try {
+    await connectDB();
+    await seedUsersFromExcel(serverExcelPath);
 
-  // Connect to DB and seed users in background
-  connectDB()
-    .then(() => seedUsersFromExcel(serverExcelPath))
-    .then(() => console.log('Database initialization & excel seeding complete.'))
-    .catch((err) => console.error('Background DB Init Error:', err));
-});
+    app.listen(PORT, () => {
+      console.log(`=================================================`);
+      console.log(`🚀 GrowX Backend Server running on port: ${PORT}`);
+      console.log(`🔒 Private Login Authentication & Data Isolation ACTIVE`);
+      console.log(`=================================================`);
+    });
+  } catch (error) {
+    console.error('Server Initialization Failure:', error.message);
+    process.exit(1);
+  }
+};
+
+startServer();

@@ -1,31 +1,36 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongoMemoryServer = null;
 
 export const connectDB = async () => {
   try {
-    const connUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/growx';
-    console.log(`Connecting to MongoDB at: ${connUri}...`);
+    const isProduction = process.env.NODE_ENV === 'production';
+    const mongoUri = process.env.MONGO_URI;
 
     mongoose.set('strictQuery', false);
 
-    try {
-      await mongoose.connect(connUri, { serverSelectionTimeoutMS: 2000 });
-      console.log(`MongoDB Connected successfully to ${mongoose.connection.host}`);
-    } catch (err) {
-      console.log('Local MongoDB service not reachable. Spawning lightweight MongoMemoryServer...');
-      mongoMemoryServer = await MongoMemoryServer.create({
-        binary: {
-          version: '4.4.18'
-        }
-      });
-      const mongoUri = mongoMemoryServer.getUri();
+    if (mongoUri) {
+      console.log('Connecting to MongoDB Atlas / Remote Database...');
       await mongoose.connect(mongoUri);
-      console.log(`MongoMemoryServer started and connected at ${mongoUri}`);
+      console.log(`MongoDB Connected successfully to host: ${mongoose.connection.host}`);
+      return;
     }
+
+    if (isProduction) {
+      console.error('CRITICAL CONFIGURATION ERROR: process.env.MONGO_URI is missing in production environment. Exiting...');
+      process.exit(1);
+    }
+
+    // Local Development Fallback (only when NODE_ENV !== 'production' and process.env.MONGO_URI is absent)
+    console.log('No MONGO_URI provided in local environment. Initializing local MongoMemoryServer for development...');
+    const { MongoMemoryServer } = await import('mongodb-memory-server');
+    mongoMemoryServer = await MongoMemoryServer.create();
+    const memoryUri = mongoMemoryServer.getUri();
+    await mongoose.connect(memoryUri);
+    console.log(`Development MongoMemoryServer connected at: ${memoryUri}`);
+
   } catch (error) {
-    console.error(`MongoDB connection error: ${error.message}`);
+    console.error(`MongoDB Connection Failed: ${error.message}`);
     process.exit(1);
   }
 };
