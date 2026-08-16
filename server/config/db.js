@@ -10,14 +10,14 @@ export const connectDB = async () => {
     mongoose.set('strictQuery', false);
 
     if (mongoUri) {
-      console.log('Connecting to MongoDB Atlas / Remote Database...');
+      console.log('Connecting to MongoDB Atlas...');
       await mongoose.connect(mongoUri);
-      console.log(`MongoDB Connected successfully to host: ${mongoose.connection.host}`);
+      console.log('MongoDB Atlas connected successfully');
       return;
     }
 
     if (isProduction) {
-      console.error('CRITICAL CONFIGURATION ERROR: process.env.MONGO_URI is missing in production environment. Exiting...');
+      console.error('CRITICAL CONFIGURATION ERROR: process.env.MONGO_URI is missing in production environment.');
       process.exit(1);
     }
 
@@ -30,7 +30,7 @@ export const connectDB = async () => {
     console.log(`Development MongoMemoryServer connected at: ${memoryUri}`);
 
   } catch (error) {
-    console.error(`MongoDB Connection Failed: ${error.message}`);
+    console.error(`MongoDB Atlas Connection Failed: ${error.message}`);
     process.exit(1);
   }
 };
