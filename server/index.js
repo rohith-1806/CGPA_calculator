@@ -58,7 +58,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Ensure login credentials.xlsx exists in server/data and root directory
+// Absolute file paths using __dirname
 const serverExcelPath = path.join(__dirname, 'data/login credentials.xlsx');
 const rootExcelPath = path.join(__dirname, '../login credentials.xlsx');
 
@@ -74,7 +74,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`=================================================`);
 });
 
-// Connect to MongoDB Atlas and run seed in parallel
+// Connect to MongoDB Atlas & seed users in background
 connectDB()
   .then(() => seedUsersFromExcel(serverExcelPath))
   .then(() => {

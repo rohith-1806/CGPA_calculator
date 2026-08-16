@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-const getJwtSecret = () => process.env.JWT_SECRET || 'growx_secret_key_2026';
+const getJwtSecret = () => process.env.JWT_SECRET || 'growx_super_secret_jwt_key_2026_academic_platform';
 
 router.get('/reseed', async (req, res) => {
   try {
@@ -32,28 +32,33 @@ router.get('/reseed', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { loginId, password } = req.body;
+    const rawLoginId = req.body.loginId || req.body.email || req.body.login_id;
+    const password = req.body.password;
 
-    if (!loginId || !password) {
+    if (!rawLoginId || !password) {
       return res.status(400).json({
         success: false,
         message: 'Invalid login credentials.'
       });
     }
 
-    const cleanInput = loginId.toString().trim().toLowerCase();
+    const cleanInput = rawLoginId.toString().trim().toLowerCase();
+    const escapedInput = cleanInput.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
     let user = null;
 
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) {
       user = await User.findOne({
         $or: [
-          { loginId: cleanInput },
-          { email: cleanInput },
-          { rollNumber: cleanInput.toUpperCase() }
+          { loginId: new RegExp(`^${escapedInput}$`, 'i') },
+          { email: new RegExp(`^${escapedInput}$`, 'i') },
+          { rollNumber: new RegExp(`^${escapedInput}$`, 'i') }
         ]
       });
-    } else {
-      // In-memory fallback lookup
+    }
+
+    if (!user) {
+      // Fallback lookup in memory store if DB is initializing or offline
       for (const u of inMemoryUsers.values()) {
         if (
           u.loginId.toLowerCase() === cleanInput ||
@@ -105,7 +110,7 @@ router.post('/login', async (req, res) => {
       user: userProfile
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login processing error:', error);
     return res.status(500).json({
       success: false,
       message: 'Invalid login credentials.'
