@@ -85,7 +85,10 @@ export const seedUsersFromExcel = async (filePath) => {
         user.loginId = cleanLoginId;
         user.email = cleanLoginId;
         user.rollNumber = item.rollNumber;
-        user.passwordHash = passwordHash;
+        // Keep existing passwordHash if present to preserve admin edits
+        if (!user.passwordHash) {
+          user.passwordHash = passwordHash;
+        }
         await user.save();
         updatedCount++;
       }

@@ -36,6 +36,26 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '1st Semester'
     },
+    university: {
+      type: String,
+      default: 'JNTUK',
+      trim: true
+    },
+    regulation: {
+      type: String,
+      default: 'R20',
+      trim: true
+    },
+    branch: {
+      type: String,
+      default: 'CSE',
+      trim: true
+    },
+    courseType: {
+      type: String,
+      default: 'B.Tech',
+      trim: true
+    },
     role: {
       type: String,
       enum: ['student', 'admin'],
@@ -53,9 +73,14 @@ userSchema.methods.toPublicJSON = function () {
     name: obj.name,
     rollNumber: obj.rollNumber,
     loginId: obj.loginId,
-    email: obj.loginId,
-    presentSemester: `${obj.presentYear || '4th Year'} – ${obj.presentSemester || '1st Semester'}`,
-    role: obj.role
+    email: obj.email || obj.loginId,
+    presentYear: obj.presentYear || '4th Year',
+    presentSemester: obj.presentSemester || '1st Semester',
+    university: obj.university || 'JNTUK',
+    regulation: obj.regulation || 'R20',
+    branch: obj.branch || 'CSE',
+    courseType: obj.courseType || 'B.Tech',
+    role: obj.role || 'student'
   };
 };
 

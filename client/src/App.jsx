@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { AdminAuthProvider } from './context/AdminAuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminProtectedRoute } from './components/AdminProtectedRoute';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { BottomNav } from './components/BottomNav';
@@ -13,6 +15,9 @@ import { Dashboard } from './pages/Dashboard';
 import { Calculator } from './pages/Calculator';
 import { Performance } from './pages/Performance';
 import { Profile } from './pages/Profile';
+
+import { AdminLogin } from './pages/AdminLogin';
+import { AdminDashboard } from './pages/AdminDashboard';
 
 const AppLayout = ({ children }) => {
   return (
@@ -43,6 +48,7 @@ const AppRoutes = () => {
 
   return (
     <Routes>
+      {/* Student Routes */}
       <Route path="/login" element={<Login />} />
 
       <Route
@@ -89,6 +95,18 @@ const AppRoutes = () => {
         }
       />
 
+      {/* Dedicated Admin Routes */}
+      <Route path="/admin" element={<AdminLogin />} />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        }
+      />
+
+      {/* Fallback Route */}
       <Route
         path="*"
         element={
@@ -103,9 +121,11 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <AdminAuthProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </AdminAuthProvider>
       </AuthProvider>
     </ThemeProvider>
   );
