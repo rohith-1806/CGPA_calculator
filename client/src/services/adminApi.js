@@ -10,8 +10,14 @@ const getAdminHeaders = () => {
 };
 
 export const loginAdmin = async (email, password) => {
-  const response = await api.post('/admin/login', { email, password });
-  return response.data;
+  try {
+    const response = await api.post('/auth/admin/login', { email, password });
+    return response.data;
+  } catch (err) {
+    // Fallback to /admin/login if needed
+    const response = await api.post('/admin/login', { email, password });
+    return response.data;
+  }
 };
 
 export const getAdminMe = async () => {
@@ -41,6 +47,11 @@ export const getStudentDetails = async (studentId) => {
 
 export const updateStudentProfile = async (studentId, profileData) => {
   const response = await api.put(`/admin/students/${studentId}`, profileData, getAdminHeaders());
+  return response.data;
+};
+
+export const resetStudentPassword = async (studentId, password) => {
+  const response = await api.put(`/admin/students/${studentId}/password`, { password }, getAdminHeaders());
   return response.data;
 };
 

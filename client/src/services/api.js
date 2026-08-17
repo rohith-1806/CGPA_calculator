@@ -26,7 +26,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('growx_jwt_token');
-    if (token) {
+    if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -39,8 +39,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Clear token if expired/invalid and not already on login page
-      if (window.location.pathname !== '/login') {
+      if (window.location.pathname.startsWith('/admin')) {
+        if (window.location.pathname !== '/admin') {
+          localStorage.removeItem('growx_admin_jwt_token');
+          localStorage.removeItem('growx_admin_user_data');
+          window.location.href = '/admin';
+        }
+      } else if (window.location.pathname !== '/login') {
         localStorage.removeItem('growx_jwt_token');
         localStorage.removeItem('growx_user_data');
         window.location.href = '/login';

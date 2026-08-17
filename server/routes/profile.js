@@ -3,7 +3,6 @@ import User from '../models/User.js';
 import AcademicRecord from '../models/AcademicRecord.js';
 import { protect } from '../middleware/auth.js';
 import { calculateAcademicSummary } from '../utils/calculations.js';
-import { inMemoryAcademicRecords } from '../utils/memoryFallbackStore.js';
 
 const router = express.Router();
 
@@ -11,12 +10,11 @@ router.get('/', protect, async (req, res) => {
   try {
     let semesters = [];
     if (req.user._id) {
-      const record = await AcademicRecord.findOne({ userId: req.user._id });
-      if (record) semesters = record.semesters;
-      else {
-        const memRecord = inMemoryAcademicRecords.get(req.user._id.toString());
-        if (memRecord) semesters = memRecord.semesters;
+      let record = await AcademicRecord.findOne({ userId: req.user._id });
+      if (!record) {
+        record = await AcademicRecord.create({ userId: req.user._id, semesters: [] });
       }
+      semesters = record.semesters || [];
     }
     const summary = calculateAcademicSummary(semesters);
 
@@ -25,8 +23,9 @@ router.get('/', protect, async (req, res) => {
       name: req.user.name,
       rollNumber: req.user.rollNumber,
       loginId: req.user.loginId,
-      email: req.user.loginId,
-      presentSemester: '4th Year – 1st Semester'
+      email: req.user.email || req.user.loginId,
+      presentYear: req.user.presentYear || '4th Year',
+      presentSemester: req.user.presentSemester || '1st Semester'
     };
 
     return res.status(200).json({

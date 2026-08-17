@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import mongoose from 'mongoose';
 
 let mongoMemoryServer = null;
@@ -11,9 +12,20 @@ export const connectDB = async () => {
 
     if (mongoUri) {
       console.log('Connecting to MongoDB Atlas...');
-      await mongoose.connect(mongoUri);
-      console.log('MongoDB Atlas connected successfully');
-      return;
+      try {
+        await mongoose.connect(mongoUri, {
+          serverSelectionTimeoutMS: 8000
+        });
+        console.log('MongoDB connected successfully');
+        return;
+      } catch (connErr) {
+        console.error(`MongoDB Atlas Connection Error: ${connErr.message}`);
+        if (isProduction) {
+          throw connErr;
+        }
+        // In local development, if connection to local or specified URI failed, fallback to MongoMemoryServer
+        console.log('Falling back to local MongoMemoryServer for development...');
+      }
     }
 
     if (isProduction) {
@@ -21,16 +33,15 @@ export const connectDB = async () => {
       process.exit(1);
     }
 
-    // Local Development Fallback (only when NODE_ENV !== 'production' and process.env.MONGO_URI is absent)
-    console.log('No MONGO_URI provided in local environment. Initializing local MongoMemoryServer for development...');
+    // Local Development Fallback
+    console.log('Initializing local MongoMemoryServer for offline development...');
     const { MongoMemoryServer } = await import('mongodb-memory-server');
     mongoMemoryServer = await MongoMemoryServer.create();
     const memoryUri = mongoMemoryServer.getUri();
     await mongoose.connect(memoryUri);
-    console.log(`Development MongoMemoryServer connected at: ${memoryUri}`);
-
+    console.log('MongoDB connected successfully (Development MongoMemoryServer)');
   } catch (error) {
-    console.error(`MongoDB Atlas Connection Failed: ${error.message}`);
+    console.error(`MongoDB Connection Failed: ${error.message}`);
     process.exit(1);
   }
 };

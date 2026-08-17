@@ -404,6 +404,48 @@ router.put('/students/:id', protect, adminOnly, async (req, res) => {
 });
 
 /**
+ * @route   PUT /api/admin/students/:id/password
+ * @desc    Admin reset student password
+ * @access  Private/Admin
+ */
+router.put('/students/:id/password', protect, adminOnly, async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const { password } = req.body;
+
+    if (!password || password.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'New password is required.'
+      });
+    }
+
+    const student = await User.findById(studentId);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Student not found.'
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    student.passwordHash = await bcrypt.hash(password.trim(), salt);
+    await student.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Password for ${student.name} updated successfully.`
+    });
+  } catch (error) {
+    console.error('Error resetting student password:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to reset student password.'
+    });
+  }
+});
+
+/**
  * @route   DELETE /api/admin/students/:id
  * @desc    Delete student account and academic records safely
  * @access  Private/Admin

@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 import User from '../models/User.js';
-import { inMemoryUsers } from '../utils/memoryFallbackStore.js';
 
 export const protect = async (req, res, next) => {
   let token;
@@ -21,21 +19,7 @@ export const protect = async (req, res, next) => {
     const secret = process.env.JWT_SECRET || 'growx_super_secret_jwt_key_2026_academic_platform';
     const decoded = jwt.verify(token, secret);
 
-    let user = null;
-
-    if (mongoose.connection.readyState === 1) {
-      user = await User.findById(decoded.id).select('-passwordHash');
-    }
-
-    if (!user) {
-      // Check in memory store fallback
-      for (const u of inMemoryUsers.values()) {
-        if (u._id === decoded.id) {
-          user = u;
-          break;
-        }
-      }
-    }
+    const user = await User.findById(decoded.id).select('-passwordHash');
 
     if (!user) {
       return res.status(401).json({

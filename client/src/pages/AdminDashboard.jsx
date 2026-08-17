@@ -9,6 +9,7 @@ import {
   createStudent,
   getStudentDetails,
   updateStudentProfile,
+  resetStudentPassword,
   deleteStudent,
   addSemesterAdmin,
   updateSemesterAdmin,
@@ -37,7 +38,8 @@ import {
   FiAward,
   FiActivity,
   FiChevronRight,
-  FiRefreshCw
+  FiRefreshCw,
+  FiKey
 } from 'react-icons/fi';
 
 export const AdminDashboard = () => {
@@ -72,6 +74,11 @@ export const AdminDashboard = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [selectedStudentForEdit, setSelectedStudentForEdit] = useState(null);
+
+  // Reset Password Modal State
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [resetPasswordStudent, setResetPasswordStudent] = useState(null);
+  const [newPasswordInput, setNewPasswordInput] = useState('');
 
   // Detailed View Modal
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -250,6 +257,23 @@ export const AdminDashboard = () => {
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update student profile.');
+    }
+  };
+
+  // Handler: Reset Password
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!resetPasswordStudent || !newPasswordInput) return;
+    try {
+      const res = await resetStudentPassword(resetPasswordStudent._id, newPasswordInput);
+      if (res.success) {
+        setIsResetPasswordModalOpen(false);
+        setNewPasswordInput('');
+        setResetPasswordStudent(null);
+        showToast(res.message || 'Student password reset successfully!');
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to reset student password.');
     }
   };
 
@@ -1000,6 +1024,31 @@ export const AdminDashboard = () => {
                           </button>
 
                           <button
+                            onClick={() => {
+                              setResetPasswordStudent(s);
+                              setNewPasswordInput('');
+                              setIsResetPasswordModalOpen(true);
+                            }}
+                            title="Reset Password"
+                            style={{
+                              padding: '8px 12px',
+                              borderRadius: '10px',
+                              border: '1px solid var(--border-color)',
+                              background: 'rgba(168, 85, 247, 0.1)',
+                              color: '#A855F7',
+                              fontWeight: 600,
+                              fontSize: '13px',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px'
+                            }}
+                          >
+                            <FiKey size={15} />
+                            <span>Password</span>
+                          </button>
+
+                          <button
                             onClick={() => confirmDeleteStudent(s)}
                             title="Delete Student"
                             style={{
@@ -1082,7 +1131,7 @@ export const AdminDashboard = () => {
                   required
                   value={createForm.name}
                   onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                  placeholder="e.g. VETTI AMBIKA"
+                  placeholder="e.g. Rohith"
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-main)', fontSize: '14px' }}
                 />
               </div>
@@ -1094,7 +1143,7 @@ export const AdminDashboard = () => {
                   required
                   value={createForm.rollNumber}
                   onChange={(e) => setCreateForm({ ...createForm, rollNumber: e.target.value })}
-                  placeholder="e.g. 23351A6101"
+                  placeholder="e.g. 23351A6181"
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-main)', fontSize: '14px' }}
                 />
               </div>
@@ -1106,7 +1155,7 @@ export const AdminDashboard = () => {
                   required
                   value={createForm.email}
                   onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
-                  placeholder="e.g. student@gmail.com"
+                  placeholder="e.g. rohith@example.com"
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-main)', fontSize: '14px' }}
                 />
               </div>
@@ -1186,6 +1235,7 @@ export const AdminDashboard = () => {
                 >
                   <option value="1st Semester">1st Semester</option>
                   <option value="2nd Semester">2nd Semester</option>
+                  <option value="4th Year - 1st Semester">4th Year - 1st Semester</option>
                 </select>
               </div>
 
@@ -1277,7 +1327,7 @@ export const AdminDashboard = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' }}>New Password (Leave blank to keep unchanged)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' }}>New Password (Optional)</label>
                 <input
                   type="password"
                   value={editForm.password}
@@ -1350,12 +1400,121 @@ export const AdminDashboard = () => {
                 >
                   <option value="1st Semester">1st Semester</option>
                   <option value="2nd Semester">2nd Semester</option>
+                  <option value="4th Year - 1st Semester">4th Year - 1st Semester</option>
                 </select>
               </div>
 
               <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setIsEditProfileModalOpen(false)} style={{ padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-main)', fontWeight: 600 }}>Cancel</button>
                 <button type="submit" style={{ padding: '12px 24px', borderRadius: '12px', border: 'none', background: 'var(--accent-gradient)', color: '#FFF', fontWeight: 700 }}>Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* RESET PASSWORD MODAL */}
+      {isResetPasswordModalOpen && resetPasswordStudent && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px'
+          }}
+        >
+          <div
+            className="glass-panel animate-scale-up"
+            style={{
+              width: '100%',
+              maxWidth: '440px',
+              padding: '32px',
+              borderRadius: '24px',
+              background: 'var(--card-bg)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(168, 85, 247, 0.15)', color: '#A855F7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <FiKey size={20} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>
+                    Reset Password
+                  </h3>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    {resetPasswordStudent.name} ({resetPasswordStudent.rollNumber})
+                  </span>
+                </div>
+              </div>
+              <button onClick={() => setIsResetPasswordModalOpen(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <FiX size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleResetPasswordSubmit}>
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '8px' }}>
+                  New Password *
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={newPasswordInput}
+                  onChange={(e) => setNewPasswordInput(e.target.value)}
+                  placeholder="Enter new password"
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-main)',
+                    color: 'var(--text-main)',
+                    fontSize: '14px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsResetPasswordModalOpen(false)}
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    border: '1px solid var(--border-color)',
+                    background: 'transparent',
+                    color: 'var(--text-main)',
+                    fontWeight: 600,
+                    fontSize: '14px'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #8B5CF6, #D946EF)',
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Reset Password
+                </button>
               </div>
             </form>
           </div>
@@ -1424,7 +1583,7 @@ export const AdminDashboard = () => {
               </div>
 
               <div className="glass-panel" style={{ padding: '16px', borderRadius: '14px', textAlign: 'center' }}>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Credits</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Total Credits</span>
                 <h3 style={{ fontSize: '22px', fontWeight: 800, margin: '4px 0 0', color: 'var(--text-main)' }}>
                   {activeAcademicSummary?.totalCredits || 0}
                 </h3>
@@ -1438,9 +1597,9 @@ export const AdminDashboard = () => {
               </div>
 
               <div className="glass-panel" style={{ padding: '16px', borderRadius: '14px', textAlign: 'center' }}>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Semesters</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Total Subjects</span>
                 <h3 style={{ fontSize: '22px', fontWeight: 800, margin: '4px 0 0', color: 'var(--text-main)' }}>
-                  {activeAcademicRecord?.semesters?.length || 0}
+                  {activeAcademicSummary?.totalSubjects || 0}
                 </h3>
               </div>
             </div>
