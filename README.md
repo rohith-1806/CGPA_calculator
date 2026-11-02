@@ -90,45 +90,6 @@ CGPA = Σ (All Semester Subject Credits × Grade Points)
        / Σ (All Semester Subject Credits)
 ```
 
-- SGPA is calculated separately for each semester.
-- CGPA is calculated using the credit-weighted grade points of all included subjects.
-- CGPA is not calculated by simply averaging semester SGPAs.
-- Results are displayed up to two decimal places.
-- Failed subjects and supplementary attempts must be handled according to the applicable regulation without double-counting a subject.
-
-### 📊 Example SGPA Calculation
-
-| Subject | Credits | Marks | Grade | Grade Points |
-|---|---:|---:|---|---:|
-| Machine Learning | 3 | 94 | S | 10 |
-| Database Systems | 3 | 83 | A | 9 |
-| Computer Networks | 3 | 74 | B | 8 |
-| Professional Elective | 3 | 47 | E | 5 |
-| Laboratory | 2 | 35 | F | 0 |
-| **Total** | **14** | | | |
-
-```text
-SGPA = (3×10 + 3×9 + 3×8 + 3×5 + 2×0) / 14
-
-SGPA = 96 / 14
-
-SGPA = 6.86
-```
-
-*Example data for illustration only.*
-
-## 🧭 Platform Modules
-
-| Student Portal | Admin Portal |
-|---|---|
-| Dashboard | Admin Dashboard |
-| My Profile | Student Management |
-| CGPA Calculator | Create Student |
-| Semester Management | Academic Records |
-| Subject Management | Results Management |
-| Results | Subject Management |
-| Logout | Settings & Logout |
-
 ## 🏗️ Technology Stack
 
 | Layer | Technology |
@@ -154,54 +115,6 @@ GrowX is designed to maintain individual student records securely.
 - Student records remain available after logout and login.
 - Admin access is separated from student access.
 
-## ⚙️ Local Development
-
-### 1. Clone the Repository
-
-```bash
-git clone <YOUR_REPOSITORY_URL>
-cd <YOUR_PROJECT_FOLDER>
-```
-
-### 2. Backend Environment Variables
-
-Create a `.env` file inside the backend folder.
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secure_secret
-FRONTEND_URL=http://localhost:5173
-```
-
-### 3. Frontend Environment Variables
-
-Create a `.env` file inside the frontend folder.
-
-```env
-VITE_API_URL=http://localhost:5000
-```
-
-### 4. Install Dependencies
-
-Install dependencies using the package scripts in the respective frontend and backend directories.
-
-### 5. Start the Application
-
-Run the frontend and backend using the development scripts configured in their respective `package.json` files.
-
-**Security:** Never upload `.env` files, database passwords, JWT secrets, or student credentials to GitHub.
-
-## 🌐 Deployment
-
-The intended deployment architecture supports:
-
-- **Frontend:** Vercel
-- **Backend:** Render / Replit
-- **Database:** MongoDB Atlas
-
-Production environment variables must be configured in the deployment platform.
-
 ## 📌 Academic Disclaimer
 
 GrowX is an independent academic management project developed for personal academic record management and grade estimation.
@@ -213,10 +126,6 @@ Official university results, regulations, amendments, and examination notificati
 ## 👨‍💻 Project Creator
 
 **Developed by Perumalla Rohith**
-
-- GitHub: [rohith-1806](https://github.com/rohith-1806)
-- Portfolio: [rohith06-portfolio](https://rohith06-portfolio.netlify.app/)
-- Instagram: [@broo_codeee_](https://www.instagram.com/broo_codeee_/)
 
 ---
 
