@@ -7,8 +7,6 @@
 
 [![React](https://img.shields.io/badge/Frontend-React-149ECA?logo=react&logoColor=white)](https://react.dev/) [![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/) [![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/) [![Regulation](https://img.shields.io/badge/Academic%20Grading-JNTUK%20R23-233876)](https://jntukucen.ac.in/wp-content/uploads/2023/11/R23-REGULATIONS.pdf)
 
-[**🌐 Live Platform**](https://grow-x-academic-platform--rohith46181.replit.app/) · [**📘 Official R23 Regulations**](https://jntukucen.ac.in/wp-content/uploads/2023/11/R23-REGULATIONS.pdf)
-
 </div>
 
 ---
