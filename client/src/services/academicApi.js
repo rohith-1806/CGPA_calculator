@@ -5,6 +5,16 @@ export const getAcademicRecord = async () => {
   return response.data;
 };
 
+export const getStudentMe = async () => {
+  const response = await api.get('/students/me');
+  return response.data;
+};
+
+export const updateStudentAcademicRecords = async (academicRecords) => {
+  const response = await api.put('/students/me/academic-records', { academicRecords });
+  return response.data;
+};
+
 export const addSemester = async (semesterName) => {
   const response = await api.post('/academic/semesters', { semesterName });
   return response.data;

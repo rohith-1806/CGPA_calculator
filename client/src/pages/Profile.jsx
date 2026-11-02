@@ -143,7 +143,37 @@ export const Profile = () => {
             }}
           >
             <span style={{ color: 'var(--text-muted)', fontWeight: '600' }}>Email / Login ID</span>
-            <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>{profileData?.loginId}</strong>
+            <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>{profileData?.email || profileData?.loginId}</strong>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderBottom: '1px solid var(--border-color)',
+              paddingBottom: '12px'
+            }}
+          >
+            <span style={{ color: 'var(--text-muted)', fontWeight: '600' }}>Branch</span>
+            <strong style={{ color: 'var(--accent-primary)', fontSize: '14px', fontWeight: '700' }}>
+              {profileData?.branch || 'CSE'}
+            </strong>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderBottom: '1px solid var(--border-color)',
+              paddingBottom: '12px'
+            }}
+          >
+            <span style={{ color: 'var(--text-muted)', fontWeight: '600' }}>Present Year</span>
+            <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>
+              {profileData?.presentYear || '4th Year'}
+            </strong>
           </div>
 
           <div
@@ -156,7 +186,7 @@ export const Profile = () => {
           >
             <span style={{ color: 'var(--text-muted)', fontWeight: '600' }}>Present Semester</span>
             <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>
-              {profileData?.presentSemester || '4th Year – 1st Semester'}
+              {profileData?.presentSemester || '1st Semester'}
             </strong>
           </div>
         </div>

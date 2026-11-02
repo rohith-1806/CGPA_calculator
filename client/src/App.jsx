@@ -105,6 +105,46 @@ const AppRoutes = () => {
           </AdminProtectedRoute>
         }
       />
+      <Route
+        path="/admin/students"
+        element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/students/create"
+        element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/students/:id"
+        element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/students/:id/edit"
+        element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/records"
+        element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        }
+      />
 
       {/* Fallback Route */}
       <Route

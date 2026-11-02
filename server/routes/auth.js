@@ -160,7 +160,11 @@ router.post('/login', async (req, res) => {
       email: user.email || user.loginId,
       role: user.role || 'student',
       presentYear: user.presentYear || '4th Year',
-      presentSemester: user.presentSemester || '1st Semester'
+      presentSemester: user.presentSemester || '1st Semester',
+      branch: user.branch || 'CSE',
+      university: user.university || 'JNTUK',
+      regulation: user.regulation || 'R20',
+      courseType: user.courseType || 'B.Tech'
     };
 
     return res.status(200).json({
@@ -194,7 +198,11 @@ router.get('/me', protect, async (req, res) => {
       email: req.user.email || req.user.loginId,
       role: req.user.role || 'student',
       presentYear: req.user.presentYear || '4th Year',
-      presentSemester: req.user.presentSemester || '1st Semester'
+      presentSemester: req.user.presentSemester || '1st Semester',
+      branch: req.user.branch || 'CSE',
+      university: req.user.university || 'JNTUK',
+      regulation: req.user.regulation || 'R20',
+      courseType: req.user.courseType || 'B.Tech'
     };
 
     return res.status(200).json({
