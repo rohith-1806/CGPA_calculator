@@ -123,9 +123,9 @@ It is not affiliated with or officially endorsed by Jawaharlal Nehru Technologic
 
 Official university results, regulations, amendments, and examination notifications always take precedence over calculations displayed by GrowX.
 
-## 👨‍💻 Project Creator
+## 👨‍💻 Project Developed by
 
-**Developed by Perumalla Rohith**
+** Perumalla Rohith**
 
 ---
 
